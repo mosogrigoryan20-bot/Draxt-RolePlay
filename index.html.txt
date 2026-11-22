@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Draxt Roleplay — Հայկական SA-MP Սերվեր</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Noto+Sans+Armenian:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090b10;
+      --bg-card: rgba(18, 22, 32, 0.78);
+      --bg-card-hover: rgba(25, 31, 45, 0.95);
+      --gold: #f5b041;
+      --gold-bright: #ffd166;
+      --gold-glow: rgba(245, 176, 65, 0.35);
+      --accent-blue: #38bdf8;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --success: #22c55e;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Noto Sans Armenian', 'Montserrat', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Background Glow & Grid */
+    .bg-ambient {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(circle at 20% 15%, rgba(245, 176, 65, 0.14), transparent 40%),
+        radial-gradient(circle at 85% 25%, rgba(56, 189, 248, 0.11), transparent 42%),
+        radial-gradient(circle at 50% 85%, rgba(245, 176, 65, 0.08), transparent 50%),
+        var(--bg-dark);
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse at center, black 35%, transparent 85%);
+    }
+
+    /* Navbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(9, 11, 16, 0.72);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .logo-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--gold-bright), #d97706);
+      display: grid;
+      place-items: center;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      color: #090b10;
+      box-shadow: 0 0 24px var(--gold-glow);
+    }
+
+    .logo-text {
+      font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-text span {
+      color: var(--gold);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+    }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: var(--gold-bright);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+      color: #090b10;
+      box-shadow: 0 8px 25px var(--gold-glow);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 12px 32px rgba(245, 176, 65, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(245, 176, 65, 0.4);
+    }
+
+    /* Hero Section */
+    .hero {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 76px 24px 56px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.85fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #86efac;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    .dot-live {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.25); }
+    }
+
+    h1 {
+      font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif;
+      font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 18px;
+    }
+
+    h1 .highlight {
+      background: linear-gradient(90deg, var(--gold-bright), var(--gold), #fb923c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 580px;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 34px;
+    }
+
+    /* IP Box */
+    .ip-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(245, 176, 65, 0.25);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .ip-label {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .ip-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(9, 11, 16, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+
+    .ip-address {
+      font-family: 'Montserrat', monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+      user-select: all;
+    }
+
+    .copy-btn {
+      background: rgba(245, 176, 65, 0.15);
+      color: var(--gold-bright);
+      border: 1px solid rgba(245, 176, 65, 0.35);
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--gold);
+      color: #090b10;
+    }
+
+    .stats-mini {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      text-align: center;
+    }
+
+    .stat-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 8px;
+    }
+
+    .stat-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .stat-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Sections */
+    section {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 64px 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 44px;
+    }
+
+    .section-tag {
+      color: var(--gold);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .section-header h2 {
+      font-family: 'Montserrat', 'Noto Sans Armenian', sans-serif;
+      font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .section-header p {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+
+    /* Features Grid */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 26px;
+      transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(245, 176, 65, 0.4);
+      background: var(--bg-card-hover);
+    }
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(245, 176, 65, 0.12);
+      border: 1px solid rgba(245, 176, 65, 0.25);
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+
+    .card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.93rem;
+    }
+
+    /* How to Join Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .step-num {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: rgba(245, 176, 65, 0.22);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      background: rgba(5, 7, 11, 0.6);
+    }
+
+    footer strong {
+      color: var(--gold);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #14532d;
+      color: #dcfce7;
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      opacity: 0;
+      transform: translateY(14px);
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 48px;
+      }
+      .grid-3, .steps {
+        grid-template-columns: 1fr;
+      }
+      nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-ambient"></div>
+  <div class="bg-grid"></div>
+
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <div class="logo-badge">D</div>
+        <div class="logo-text">DRAXT <span>ROLEPLAY</span></div>
+      </a>
+      <nav>
+        <a href="#features">Հնարավորություններ</a>
+        <a href="#join">Ինչպես միանալ</a>
+        <a href="#community">Համայնք</a>
+      </nav>
+      <a href="#join" class="btn btn-primary">Սկսել խաղալ</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <div class="pill">
+          <span class="dot-live"></span>
+          <span>Սերվերը Ակտիվ է • 24/7 Աշխատանք</span>
+        </div>
+        <h1>
+          Բարի գալուստ <span class="highlight">Draxt Roleplay</span>
+        </h1>
+        <p>
+          Իրական կյանքի սիմուլյացիա հայկական շնչով։ Կառուցիր քո պատմությունը, զարգացրու սեփական բիզնեսը, միացիր պետական կառույցներին կամ կլաններին և վայելիր որակյալ Roleplay՝ առանց ավելորդ խոչընդոտների։
+        </p>
+        <div class="hero-actions">
+          <a href="#join" class="btn btn-primary">Միանալ Սերվերին</a>
+          <a href="#features" class="btn btn-ghost">Տեսնել Համակարգերը</a>
+        </div>
+      </div>
+
+      <div class="ip-card">
+        <div class="ip-label">Սերվերի Հասցեն (SA-MP IP)</div>
+        <div class="ip-row">
+          <span class="ip-address" id="serverIp">play.draxt-rp.am:7777</span>
+          <button class="copy-btn" id="copyBtn" onclick="copyIP()">Պատճենել</button>
+        </div>
+        <div class="stats-mini">
+          <div class="stat-box">
+            <div class="stat-num" id="onlineCount">84 / 200</div>
+            <div class="stat-desc">Օնլայն խաղացող</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">0.3.7-R4</div>
+            <div class="stat-desc">SA-MP տարբերակ</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">24/7</div>
+            <div class="stat-desc">Կայուն Ping</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-header">
+        <div class="section-tag">Ինչո՞վ է առանձնանում</div>
+        <h2>Draxt Roleplay-ի Հիմնական Համակարգերը</h2>
+        <p>Մշակված հարմարավետ, հավասարակշռված և հետաքրքիր խաղային փորձի համար։</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon-box">💼</div>
+          <h3>Բիզնես և Տնտեսություն</h3>
+          <p>Գնիր խանութներ, բենզալցակայաններ կամ ակումբներ, վերահսկիր գներն ու եկամուտը և ձևավորիր քո ֆինանսական կայսրությունը։</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🚓</div>
+          <h3>Ֆրակցիաներ և Կառույցներ</h3>
+          <p>Ծառայիր ոստիկանությունում, բժշկական կենտրոնում կամ լրատվականում՝ մանրամասն հրամաններով և կարիերայի աճով։</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🚗</div>
+          <h3>Ավտոմեքենաներ և Թյունինգ</h3>
+          <p>Հարուստ ավտոպարկ՝ սկսած բյուջետային մեքենաներից մինչև սպորտային մոդելներ, հարմարավետ կայանման և տյունինգի համակարգերով։</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🏠</div>
+          <h3>Տներ և Գույք</h3>
+          <p>Ձեռք բեր տներ ու բնակարաններ տարբեր թաղամասերում, պահիր անձնական իրեր և հրավիրիր ընկերներիդ։</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">🛡️</div>
+          <h3>Արդար Ադմինիստրացիա</h3>
+          <p>Ուշադիր և փորձառու թիմ, որը հետևում է Roleplay կանոններին և արագ օգնում խաղացողներին ցանկացած հարցում։</p>
+        </div>
+        <div class="card">
+          <div class="icon-box">⚡</div>
+          <h3>Օպտիմալացված Կոդ</h3>
+          <p>Արագ արձագանք, նվազագույն բագեր և կանոնավոր թարմացումներ՝ համայնքի առաջարկների հիման վրա։</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="join">
+      <div class="section-header">
+        <div class="section-tag">Մեկնարկ</div>
+        <h2>Ինչպե՞ս Միանալ Draxt Roleplay-ին</h2>
+        <p>Ընդամենը մի քանի պարզ քայլ՝ խաղը սկսելու համար։</p>
+      </div>
+
+      <div class="steps">
+        <div class="card">
+          <div class="step-num">01</div>
+          <h3>Տեղադրիր GTA San Andreas և SA-MP</h3>
+          <p>Համոզվիր, որ ունես մաքուր GTA: San Andreas խաղը և տեղադրված SA-MP 0.3.7 կլիենտը։</p>
+        </div>
+        <div class="card">
+          <div class="step-num">02</div>
+          <h3>Ավելացրու Սերվերի IP-ն</h3>
+          <p>Բացիր SA-MP launcher-ը, սեղմիր կանաչ նշանը և տեղադրիր <strong>play.draxt-rp.am:7777</strong> հասցեն։</p>
+        </div>
+        <div class="card">
+          <div class="step-num">03</div>
+          <h3>Ստեղծիր Կերպար և Սկսիր</h3>
+          <p>Ընտրիր քո կերպարի անուն-ազգանունը (օրինակ՝ <em>Armen_Petrosyan</em>), գրանցվիր և սկսիր քո արկածը։</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="community">
+      <div class="section-header">
+        <div class="section-tag">Կապ մեզ հետ</div>
+        <h2>Միացիր Մեր Համայնքին</h2>
+        <p>Հետևիր նորություններին, մասնակցիր մրցույթներին և ստացիր աջակցություն։</p>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
+        <a href="https://discord.gg" target="_blank" rel="noopener" class="btn btn-primary">Discord Սերվեր</a>
+        <a href="https://t.me" target="_blank" rel="noopener" class="btn btn-ghost">Telegram Ալիք</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> <strong>Draxt Roleplay</strong> — Բոլոր իրավունքները պաշտպանված են։</p>
+  </footer>
+
+  <div class="toast" id="toast">IP հասցեն պատճենվեց։</div>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function copyIP() {
+      const ip = document.getElementById("serverIp").textContent.trim();
+      navigator.clipboard.writeText(ip).then(() => {
+        const toast = document.getElementById("toast");
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2400);
+      });
+    }
+  </script>
+</body>
+</html>
